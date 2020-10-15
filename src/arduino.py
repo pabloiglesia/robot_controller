@@ -18,7 +18,7 @@ MY_ROBOT = RobotUR()
 def talker():
     distance_pub = rospy.Publisher('/distance', Float32)
     gripper_pub = rospy.Publisher('/object_gripped', Bool)
-    rospy.init_node('/arduino', anonymous=True)
+    rospy.init_node('arduino', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         distance = MY_ROBOT.get_current_pose().pose.position.z - PICK_MOVEMENT_DISTANCE
