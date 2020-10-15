@@ -5,7 +5,7 @@ import time
 from std_msgs.msg import Bool
 from std_msgs.msg import Float32
 
-from ai_package.Environment import Environment
+from ai_manager.Environment import Environment
 from ur_icam_description.robotUR import RobotUR
 
 
@@ -13,7 +13,7 @@ class Robot:
     def __init__(self, robot=RobotUR(), gripper_topic='switch_on_off'):
         self.robot = robot  # Robot we want to control
         self.gripper_topic = gripper_topic  # Gripper topic
-        self.self.gripper_publisher = rospy.Publisher(self.gripper_topic, Bool)  # Publisher for the gripper topic
+        self.gripper_publisher = rospy.Publisher(self.gripper_topic, Bool)  # Publisher for the gripper topic
 
     def relative_move(self, x, y, z):
         waypoints = []

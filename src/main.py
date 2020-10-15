@@ -67,7 +67,7 @@ if __name__ == '__main__':
     robot.go_to_initial_pose()
 
     # Let's put the robot in a random position to start, creation of new state
-    take_action('random_state')
+    take_action('random_state', robot)
 
     while True:
         action = get_action(robot)
