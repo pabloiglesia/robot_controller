@@ -15,10 +15,11 @@ roslaunch ur3_moveit_config ur3_moveit_planning_execution.launch
 rosrun ai_manager talker.py
 
 - Activate the node
-rosrun ai_manager distance_sensor_simulator.py
+rosrun robot_controller distance_sensor_simulator.py
+rosrun robot_controller object_gripped.py
 
 - Finally, we can run the program
-rosrun ai_manager pick_and_place.py
+rosrun robot_controller main.py
 
 """
 
@@ -33,7 +34,7 @@ from std_msgs.msg import Float64MultiArray
 from std_msgs.msg import String
 from std_msgs.msg import Float32
 from ai_manager.srv import GetActions
-from ai_manager.Environment import Environment
+from ai_package.Environment import Environment
 
 
 from ur_icam_description.robotUR import RobotUR

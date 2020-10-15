@@ -159,7 +159,7 @@ include_directories(
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-catkin_install_python(PROGRAMS src/robot_controller.py src/distance_sensor_simulator.py
+catkin_install_python(PROGRAMS src/main.py src/distance_sensor_simulator.py
 	src/object_gripped.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
