@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from std_msgs.msg import Bool
+from std_msgs.msg import String
 
 
 
@@ -14,7 +14,7 @@ def listener():
     # anonymous=True flag means that rospy will choose a unique
     # name for our 'listener' node so that multiple listeners can
     # run simultaneously.
-    rospy.Subscriber("object_gripped", Bool, callback)
+    rospy.Subscriber("distance", String, callback)
 
     rospy.init_node('listener', anonymous=True)
 
