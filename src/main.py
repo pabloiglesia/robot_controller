@@ -41,6 +41,7 @@ def get_action(robot, object_gripped):
 
 # This function defines the movements that robot should make depending on the action listened
 def take_action(action, robot):
+    rospy.loginfo("Action received: {}".format(action))
     distance = 0.02 # Movement in metres
     object_gripped = False
     if action == 'north':

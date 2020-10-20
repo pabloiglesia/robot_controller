@@ -74,7 +74,7 @@ class Robot:
         # Move the robot to the random state
         self.relative_move(x_movement, y_movement, 0)
 
-    def send_gripper_message(self, msg, time=2, n_msg=10):
+    def send_gripper_message(self, msg, timer=2, n_msg=10):
         """
         Function that sends a burst of n messages of the gripper_topic during an indicated time
         :param msg: True or False
@@ -82,7 +82,7 @@ class Robot:
         :param n_msg: number of messages
         :return:
         """
-        time_step = time/n_msg
+        time_step = timer/n_msg
         i=0
         while(i != n_msg):
             self.gripper_publisher.publish(msg)
