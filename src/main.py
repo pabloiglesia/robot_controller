@@ -12,11 +12,10 @@ roslaunch ur_robot_driver ur3_bringup.launch robot_ip:=10.31.56.102 kinematics_c
 roslaunch ur3_moveit_config ur3_moveit_planning_execution.launch
 
 - Activate the talker
-rosrun ai_manager talker.py
+rosrun ai_manager main.py
 
 - Activate the node
-rosrun robot_controller distance_sensor_simulator.py
-rosrun robot_controller object_gripped.py
+rosrun robot_controller arduino.py
 
 - Finally, we can run the program
 rosrun robot_controller main.py
@@ -41,16 +40,15 @@ def get_action(robot, object_gripped):
 
 # This function defines the movements that robot should make depending on the action listened
 def take_action(action, robot):
-    distance = 0.02 # Movement in metres
     object_gripped = False
     if action == 'north':
-        robot.take_north(distance)
+        robot.take_north()
     elif action == 'south':
-        robot.take_south(distance)
+        robot.take_south()
     elif action == 'east':
-        robot.take_east(distance)
+        robot.take_east()
     elif action == 'west':
-        robot.take_west(distance)
+        robot.take_west()
     elif action == 'pick':
         object_gripped = robot.take_pick()
     elif action == 'random_state':

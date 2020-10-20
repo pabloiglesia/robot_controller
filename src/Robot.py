@@ -51,19 +51,19 @@ class Robot:
         return [relative_coordinate_x, relative_coordinate_y]
 
     # Action north: positive x
-    def take_north(self, distance):
+    def take_north(self, distance=Environment.ACTION_DISTANCE):
         self.relative_move(distance, 0, 0)
 
     # Action south: negative x
-    def take_south(self, distance):
+    def take_south(self, distance=Environment.ACTION_DISTANCE):
         self.relative_move(-distance, 0, 0)
 
     # Action east: negative y
-    def take_east(self, distance):
+    def take_east(self, distance=Environment.ACTION_DISTANCE):
         self.relative_move(0, -distance, 0)
 
     # Action west: positive y
-    def take_west(self, distance):
+    def take_west(self, distance=Environment.ACTION_DISTANCE):
         self.relative_move(0, distance, 0)
 
     def take_random_state(self):
