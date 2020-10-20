@@ -74,6 +74,21 @@ class Robot:
         # Move the robot to the random state
         self.relative_move(x_movement, y_movement, 0)
 
+    def send_gripper_message(self, msg, time=2, n_msg=10):
+        """
+        Function that sends a burst of n messages of the gripper_topic during an indicated time
+        :param msg: True or False
+        :param time: time in seconds
+        :param n_msg: number of messages
+        :return:
+        """
+        time_step = time/n_msg
+        i=0
+        while(i != n_msg):
+            self.gripper_publisher.publish(msg)
+            time.sleep(time_step)
+            i += 1
+
     # Action pick: Pick and place
     def take_pick(self):
         # In this function we should read the distance to the object
@@ -87,7 +102,7 @@ class Robot:
 
             if distance <= Environment.PICK_DISTANCE:  # If distance is equal or smaller than the target distance
                 # TODO : Check what kind of msg the subscriber is waiting
-                self.gripper_publisher.publish(True)  # We try to pick the object enabling the vacuum gripper
+                self.send_gripper_message(True)  # We try to pick the object enabling the vacuum gripper
                 time.sleep(2)  # We wait some time to let the vacuum pick the object
                 distance_ok = True  # End the loop by setting this variable to True
             else:  # If the distance to the objects is higher than the target distance
@@ -101,7 +116,9 @@ class Robot:
         if object_gripped:  # If we have gripped an object we place it into the desired point
             self.take_place()
         else:
-            self.gripper_publisher.publish(False)  # We turn off the gripper
+            self.send_gripper_message(False)  # We turn off the gripper
+
+        return object_gripped
 
     # Function to define the place for placing the grasped objects
     def take_place(self):
@@ -122,7 +139,7 @@ class Robot:
         self.relative_move(0, 0, -0.05)
         # Then, we switch off the vacuum gripper so the object can be placed
         # TODO : Check the correct information to send the topic
-        self.gripper_publisher.publish(False)
+        self.send_gripper_message(False)
         # Wait some seconds, in order to the msg to arrive to the gripper
         time.sleep(2)
         # Then the robot goes up

@@ -27,7 +27,7 @@ def talker():
 
         object_gripped = random.random() > 0.7
         rospy.loginfo("Object_gripped: {}".format(object_gripped))
-        # gripper_pub.publish(object_gripped)
+        gripper_pub.publish(object_gripped)
         rate.sleep()
 
 
