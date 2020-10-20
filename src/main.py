@@ -29,12 +29,12 @@ from ai_manager.srv import GetActions
 from Robot import Robot
 
 
-def get_action(robot):
+def get_action(robot, object_gripped):
     relative_coordinates = robot.calculate_current_coordinates()
     rospy.wait_for_service('get_actions')
     try:
         get_actions = rospy.ServiceProxy('get_actions', GetActions)
-        return get_actions(relative_coordinates[0], relative_coordinates[1]).action
+        return get_actions(relative_coordinates[0], relative_coordinates[1], object_gripped).action
     except rospy.ServiceException as e:
         print("Service call failed: %s"%e)
 
@@ -42,7 +42,7 @@ def get_action(robot):
 # This function defines the movements that robot should make depending on the action listened
 def take_action(action, robot):
     distance = 0.02 # Movement in metres
-    print(action)
+    object_gripped = False
     if action == 'north':
         robot.take_north(distance)
     elif action == 'south':
@@ -52,9 +52,10 @@ def take_action(action, robot):
     elif action == 'west':
         robot.take_west(distance)
     elif action == 'pick':
-        robot.take_pick()
+        object_gripped = robot.take_pick()
     elif action == 'random_state':
         robot.take_random_state()
+    return object_gripped
 
 
 if __name__ == '__main__':
@@ -67,8 +68,8 @@ if __name__ == '__main__':
     robot.go_to_initial_pose()
 
     # Let's put the robot in a random position to start, creation of new state
-    take_action('random_state', robot)
+    object_gripped = take_action('random_state', robot)
 
     while True:
-        action = get_action(robot)
-        take_action(action, robot)
+        action = get_action(robot, object_gripped)
+        object_gripped = take_action(action, robot)

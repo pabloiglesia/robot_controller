@@ -118,6 +118,8 @@ class Robot:
         else:
             self.send_gripper_message(False)  # We turn off the gripper
 
+        return object_gripped
+
     # Function to define the place for placing the grasped objects
     def take_place(self):
         # First, we get the cartesian coordinates of one of the corner
