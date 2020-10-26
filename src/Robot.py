@@ -8,6 +8,11 @@ from std_msgs.msg import Float32
 from ai_manager.Environment import Environment
 from ur_icam_description.robotUR import RobotUR
 
+"""
+Class used to establish connection with the robot and perform different actions such as move in all cardinal directions 
+or pick and place an object. 
+"""
+
 
 class Robot:
     def __init__(self, robot=RobotUR(), gripper_topic='switch_on_off'):
@@ -16,6 +21,14 @@ class Robot:
         self.gripper_publisher = rospy.Publisher(self.gripper_topic, Bool)  # Publisher for the gripper topic
 
     def relative_move(self, x, y, z):
+        """
+        Perform a relative move in all x, y or z coordinates.
+
+        :param x:
+        :param y:
+        :param z:
+        :return:
+        """
         waypoints = []
         wpose = self.robot.get_current_pose().pose
         if x:
