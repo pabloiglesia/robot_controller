@@ -25,7 +25,7 @@ def talker():
         rospy.loginfo("Measure distance: {}".format(distance))
         distance_pub.publish(distance)
 
-        object_gripped = random.random() > 0.7
+        object_gripped = random.random() > 0.4
         rospy.loginfo("Object_gripped: {}".format(object_gripped))
         gripper_pub.publish(object_gripped)
         rate.sleep()
