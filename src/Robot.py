@@ -139,7 +139,7 @@ class Robot:
 
         waypoints = []
         wpose = self.robot.get_current_pose().pose
-        wpose.position.z += (wpose.position.z - 0.24)  # Third move sideways (z)
+        wpose.position.z -= (wpose.position.z - 0.24)  # Third move sideways (z)
         waypoints.append(copy.deepcopy(wpose))
 
         (plan, fraction) = self.robot.move_group.compute_cartesian_path(
