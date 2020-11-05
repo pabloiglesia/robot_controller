@@ -124,13 +124,41 @@ class Robot:
         #         up_distance += difference  # We increment the up_distance variable
         #         self.relative_move(0, 0, -difference)  # We try to move to the desired distance
 
-        distance_ok = False  # False until target is reached
+
+
+
+
+
+        # distance_ok = False  # False until target is reached
+        # while not distance_ok:
+        #     # Check if the distance is the correct one
+        #     # TODO : check if the distance is in the correct measures
+        #     distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
+        #     self.relative_move(0, 0, -0.01)  # We try to move to the desired distance
+        #     up_distance += 0.01  # We increment the up_distance variable
+
+        waypoints = []
+        wpose = self.robot.get_current_pose().pose
+        wpose.position.z += (wpose.position.z - 0.24)  # Third move sideways (z)
+        waypoints.append(copy.deepcopy(wpose))
+
+        (plan, fraction) = self.robot.move_group.compute_cartesian_path(
+            waypoints,  # waypoints to follow
+            0.01,  # eef_step
+            0.0)  # jump_threshold
+        self.robot.move_group.execute(plan, wait=True)
+
+        distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
         while not distance_ok:
             # Check if the distance is the correct one
             # TODO : check if the distance is in the correct measures
             distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
-            self.relative_move(0, 0, -0.01)  # We try to move to the desired distance
-            up_distance += 0.01  # We increment the up_distance variable
+
+        self.robot.move_group.stop()
+
+
+
+
 
         print("He salido del bucle")
         self.relative_move(0, 0, -0.01)  # We try to move to the desired distance
