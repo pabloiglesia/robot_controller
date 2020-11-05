@@ -127,6 +127,7 @@ class Robot:
         distance_ok = False  # False until target is reached
         while not distance_ok:
             # Check if the distance is the correct one
+            print("Estoy en el bucle")
             # TODO : check if the distance is in the correct measures
             distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
             self.relative_move(0, 0, -0.01)  # We try to move to the desired distance
