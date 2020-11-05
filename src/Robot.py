@@ -127,13 +127,13 @@ class Robot:
         distance_ok = False  # False until target is reached
         while not distance_ok:
             # Check if the distance is the correct one
-            print("Estoy en el bucle")
             # TODO : check if the distance is in the correct measures
             distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
             self.relative_move(0, 0, -0.01)  # We try to move to the desired distance
             up_distance += 0.01  # We increment the up_distance variable
 
-        self.relative_move(0, 0, -0.02)  # We try to move to the desired distance
+        print("He salido del bucle")
+        self.relative_move(0, 0, -0.01)  # We try to move to the desired distance
         up_distance += 0.02  # We increment the up_distance variable
         self.send_gripper_message(True)  # We try to pick the object enabling the vacuum gripper
         time.sleep(2)  # We wait some time to let the vacuum pick the object
