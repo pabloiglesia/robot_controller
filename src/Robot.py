@@ -137,6 +137,12 @@ class Robot:
         #     self.relative_move(0, 0, -0.01)  # We try to move to the desired distance
         #     up_distance += 0.01  # We increment the up_distance variable
 
+        # self.relative_move(0, 0, -0.01)  # We try to move to the desired distance
+        # up_distance += 0.01  # We increment the up_distance variable
+        # self.send_gripper_message(True)  # We try to pick the object enabling the vacuum gripper
+        # time.sleep(2)  # We wait some time to let the vacuum pick the object
+
+        self.relative_move(0, 0, up_distance)  # We went back to the original pose
         waypoints = []
         wpose = self.robot.get_current_pose().pose
         wpose.position.z -= (wpose.position.z - 0.24)  # Third move sideways (z)
@@ -149,7 +155,7 @@ class Robot:
         self.robot.move_group.execute(plan, wait=True)
 
         distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
-        while not distance_ok:
+        while distance_ok:
             # Check if the distance is the correct one
             # TODO : check if the distance is in the correct measures
             distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
@@ -160,13 +166,6 @@ class Robot:
 
 
 
-        print("He salido del bucle")
-        self.relative_move(0, 0, -0.01)  # We try to move to the desired distance
-        up_distance += 0.02  # We increment the up_distance variable
-        self.send_gripper_message(True)  # We try to pick the object enabling the vacuum gripper
-        time.sleep(2)  # We wait some time to let the vacuum pick the object
-
-        self.relative_move(0, 0, up_distance)  # We went back to the original pose
 
         object_gripped = rospy.wait_for_message('object_gripped', Bool).data
         if object_gripped:  # If we have gripped an object we place it into the desired point
