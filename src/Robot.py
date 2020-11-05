@@ -140,10 +140,6 @@ class Robot:
         self.relative_move(0, 0, up_distance)  # We went back to the original pose
 
         object_gripped = rospy.wait_for_message('object_gripped', Bool).data
-        def object_gripped():
-            IMAGE_CONTROLLER = ImageController(image_topic='/usb_cam2/image_raw')
-            msg, width, height = IMAGE_CONTROLLER.get_image()
-
         if object_gripped:  # If we have gripped an object we place it into the desired point
             self.take_place()
         else:
