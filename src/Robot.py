@@ -107,21 +107,35 @@ class Robot:
         # In this function we should read the distance to the object
         up_distance = 0  # Variable were we store the distance that we have move the robot so that we can go back to the
         # original pose
+
+        # distance_ok = False  # False until target is reached
+        # while not distance_ok:
+        #     # Check if the distance is the correct one
+        #     # TODO : check if the distance is in the correct measures
+        #     distance = rospy.wait_for_message('distance', Float32).data  # We retrieve sensor distance
+        #
+        #     if distance <= Environment.PICK_DISTANCE:  # If distance is equal or smaller than the target distance
+        #         # TODO : Check what kind of msg the subscriber is waiting
+        #         self.send_gripper_message(True)  # We try to pick the object enabling the vacuum gripper
+        #         time.sleep(2)  # We wait some time to let the vacuum pick the object
+        #         distance_ok = True  # End the loop by setting this variable to True
+        #     else:  # If the distance to the objects is higher than the target distance
+        #         difference = distance - Environment.PICK_DISTANCE  # We calculate the difference between the two distances
+        #         up_distance += difference  # We increment the up_distance variable
+        #         self.relative_move(0, 0, -difference)  # We try to move to the desired distance
+
         distance_ok = False  # False until target is reached
         while not distance_ok:
             # Check if the distance is the correct one
             # TODO : check if the distance is in the correct measures
-            distance = rospy.wait_for_message('distance', Float32).data  # We retrieve sensor distance
+            distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
+            self.relative_move(0, 0, -0.01)  # We try to move to the desired distance
+            up_distance += 0.01  # We increment the up_distance variable
 
-            if distance <= Environment.PICK_DISTANCE:  # If distance is equal or smaller than the target distance
-                # TODO : Check what kind of msg the subscriber is waiting
-                self.send_gripper_message(True)  # We try to pick the object enabling the vacuum gripper
-                time.sleep(2)  # We wait some time to let the vacuum pick the object
-                distance_ok = True  # End the loop by setting this variable to True
-            else:  # If the distance to the objects is higher than the target distance
-                difference = distance - Environment.PICK_DISTANCE  # We calculate the difference between the two distances
-                up_distance += difference  # We increment the up_distance variable
-                self.relative_move(0, 0, -difference)  # We try to move to the desired distance
+        self.relative_move(0, 0, -0.02)  # We try to move to the desired distance
+        up_distance += 0.02  # We increment the up_distance variable
+        self.send_gripper_message(True)  # We try to pick the object enabling the vacuum gripper
+        time.sleep(2)  # We wait some time to let the vacuum pick the object
 
         self.relative_move(0, 0, up_distance)  # We went back to the original pose
 
