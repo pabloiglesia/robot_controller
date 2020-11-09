@@ -9,7 +9,7 @@ from ur_icam_description.robotUR import RobotUR
 import random
 
 # Global variable to calibrate distance between the robot and the table
-PICK_MOVEMENT_DISTANCE = 0.24
+PICK_MOVEMENT_DISTANCE = 0.26
 
 # Global variable for myRobot
 MY_ROBOT = RobotUR()
