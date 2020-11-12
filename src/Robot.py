@@ -111,11 +111,9 @@ class Robot:
         # distance_ok = False  # False until target is reached
         # while not distance_ok:
         #     # Check if the distance is the correct one
-        #     # TODO : check if the distance is in the correct measures
         #     distance = rospy.wait_for_message('distance', Float32).data  # We retrieve sensor distance
         #
         #     if distance <= Environment.PICK_DISTANCE:  # If distance is equal or smaller than the target distance
-        #         # TODO : Check what kind of msg the subscriber is waiting
         #         self.send_gripper_message(True)  # We try to pick the object enabling the vacuum gripper
         #         time.sleep(2)  # We wait some time to let the vacuum pick the object
         #         distance_ok = True  # End the loop by setting this variable to True
@@ -132,7 +130,6 @@ class Robot:
         # distance_ok = False  # False until target is reached
         # while not distance_ok:
         #     # Check if the distance is the correct one
-        #     # TODO : check if the distance is in the correct measures
         #     distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
         #     self.relative_move(0, 0, -0.01)  # We try to move to the desired distance
         #     up_distance += 0.01  # We increment the up_distance variable
@@ -157,7 +154,6 @@ class Robot:
         distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
         while distance_ok:
             # Check if the distance is the correct one
-            # TODO : check if the distance is in the correct measures
             distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
 
         self.robot.move_group.stop()
@@ -193,7 +189,6 @@ class Robot:
         # Then, we left the object
         self.relative_move(0, 0, -0.05)
         # Then, we switch off the vacuum gripper so the object can be placed
-        # TODO : Check the correct information to send the topic
         self.send_gripper_message(False)
         # Wait some seconds, in order to the msg to arrive to the gripper
         time.sleep(2)
