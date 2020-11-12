@@ -149,17 +149,15 @@ class Robot:
             waypoints,  # waypoints to follow
             0.01,  # eef_step
             0.0)  # jump_threshold
-        self.robot.velocity_factor(0.2)
-        self.robot.move_group.execute(plan, wait=False)
+        self.robot.move_group.execute(plan, wait=True)
+
         distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
-        while not distance_ok:
+        while distance_ok:
             # Check if the distance is the correct one
             distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
 
         self.robot.move_group.stop()
 
-        distance = Environment.CARTESIAN_CENTER[2] - self.robot.get_current_pose().pose.position.z
-        self.relative_move(0,0,distance)
 
 
 
