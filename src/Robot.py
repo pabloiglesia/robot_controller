@@ -102,10 +102,12 @@ class Robot:
             time.sleep(time_step)
             i += 1
 
+        time.sleep(timer/2)
+
     # Action pick: Pick and place
     def take_pick(self):
         # In this function we should read the distance to the object
-        up_distance = 0  # Variable were we store the distance that we have move the robot so that we can go back to the
+        # up_distance = 0  # Variable were we store the distance that we have move the robot so that we can go back to the
         # original pose
 
         # distance_ok = False  # False until target is reached
@@ -142,26 +144,38 @@ class Robot:
         # self.send_gripper_message(True)  # We try to pick the object enabling the vacuum gripper
         # time.sleep(2)  # We wait some time to let the vacuum pick the object
 
-        self.relative_move(0, 0, up_distance)  # We went back to the original pose
-        waypoints = []
-        wpose = self.robot.get_current_pose().pose
-        wpose.position.z -= (wpose.position.z - 0.24)  # Third move sideways (z)
-        waypoints.append(copy.deepcopy(wpose))
+        # self.relative_move(0, 0, up_distance)  # We went back to the original pose
+        # waypoints = []
+        # wpose = self.robot.get_current_pose().pose
+        # wpose.position.z -= (wpose.position.z - 0.24)  # Third move sideways (z)
+        # waypoints.append(copy.deepcopy(wpose))
+        #
+        # (plan, fraction) = self.robot.move_group.compute_cartesian_path(
+        #     waypoints,  # waypoints to follow
+        #     0.01,  # eef_step
+        #     0.0)  # jump_threshold
+        #
+        # self.robot.velocity_factor(0.2)
+        # self.robot.move_group.execute(plan, wait=False)
 
-        (plan, fraction) = self.robot.move_group.compute_cartesian_path(
-            waypoints,  # waypoints to follow
-            0.01,  # eef_step
-            0.0)  # jump_threshold
-        self.robot.move_group.execute(plan, wait=True)
 
         distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
-        while distance_ok:
-            # Check if the distance is the correct one
-            # TODO : check if the distance is in the correct measures
-            distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
+        while True:
+            time.sleep(0.2)
+            if not rospy.wait_for_message('distance', Bool).data:  # We retrieve sensor distance
+                self.relative_move(0, 0, -0.01)
+            else:
+                self.relative_move(0, 0, -0.005)
+                break
 
-        self.robot.move_group.stop()
+        # self.relative_move(0, 0, -0.055)
 
+        # self.robot.move_group.stop()
+        self.send_gripper_message(True, timer=4)  # We turn on the gripper
+
+
+        distance = Environment.CARTESIAN_CENTER[2] - self.robot.get_current_pose().pose.position.z
+        self.relative_move(0,0,distance)
 
 
 

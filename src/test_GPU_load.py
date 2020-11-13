@@ -25,11 +25,10 @@ rosrun robot_controller main.py
 import rospy
 
 from ai_manager.srv import GetActions
-from Robot import Robot
 from ai_manager.Environment import Environment
 
 
-def get_action(robot, object_gripped):
+def get_action(object_gripped):
     relative_coordinates = Environment.generate_random_state()
     rospy.wait_for_service('get_actions')
     try:
@@ -40,7 +39,7 @@ def get_action(robot, object_gripped):
 
 
 # This function defines the movements that robot should make depending on the action listened
-def take_action(action, robot):
+def take_action(action):
     rospy.loginfo("Action received: {}".format(action))
     object_gripped = False
     # if action == 'north':
@@ -62,14 +61,6 @@ if __name__ == '__main__':
 
     rospy.init_node('robotUR')
 
-    robot = Robot()
-
-    # Test of positioning with angular coordinates
-    robot.go_to_initial_pose()
-
-    # Let's put the robot in a random position to start, creation of new state
-    object_gripped = take_action('random_state', robot)
-
     while True:
-        action = get_action(robot, object_gripped)
-        object_gripped = take_action(action, robot)
+        action = get_action(False)
+        object_gripped = take_action(action)
