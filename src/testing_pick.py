@@ -23,10 +23,10 @@ if __name__ == '__main__':
             waypoints,  # waypoints to follow
             0.01,  # eef_step
             0.0)  # jump_threshold
-        robot.robot.move_group.execute(plan, wait=True)
+        robot.robot.move_group.execute(plan, wait=False)
 
         distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
-        while distance_ok:
+        while not distance_ok:
             distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
 
         robot.robot.move_group.stop()
