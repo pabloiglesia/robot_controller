@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+
 import rospy
 import copy
 from std_msgs.msg import Bool
