@@ -1,9 +1,11 @@
+#!/usr/bin/env python2
+
 import rospy
 import copy
+from std_msgs.msg import Bool
 
 from Robot import Robot
 from ai_manager.Environment import Environment
-from std_msgs.msg import Bool
 
 if __name__ == '__main__':
 
