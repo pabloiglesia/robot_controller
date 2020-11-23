@@ -1,13 +1,15 @@
 import rospy
 import copy
+from std_msgs.msg import Bool
 
 from Robot import Robot
 from ai_manager.Environment import Environment
-from std_msgs.msg import Bool
 
 if __name__ == '__main__':
+    rospy.init_node('robotUR')
 
     robot = Robot()
+    robot.go_to_initial_pose()
 
     while True:
         waypoints = []
