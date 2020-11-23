@@ -168,18 +168,10 @@ class Robot:
                 self.relative_move(0, 0, -0.005)
                 break
 
-        # self.relative_move(0, 0, -0.055)
-
-        # self.robot.move_group.stop()
         self.send_gripper_message(True, timer=4)  # We turn on the gripper
-
 
         distance = Environment.CARTESIAN_CENTER[2] - self.robot.get_current_pose().pose.position.z
         self.relative_move(0,0,distance)
-
-
-
-
 
         object_gripped = rospy.wait_for_message('object_gripped', Bool).data
         if object_gripped:  # If we have gripped an object we place it into the desired point
