@@ -27,14 +27,14 @@ if __name__ == '__main__':
             0.0)  # jump_threshold
         robot.robot.move_group.execute(plan, wait=False)
 
-        distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
+        distance_ok = rospy.wait_for_message('distance', Bool, 1).data  # We retrieve sensor distance
         timestamp = datetime.datetime.now()
 
         while not distance_ok:
             previous_timestamp = timestamp
             timestamp = datetime.datetime.now()
             print("Difference: {}".format( timestamp - previous_timestamp ))
-            distance_ok = rospy.wait_for_message('distance', Bool, 1).data  # We retrieve sensor distance
+            distance_ok = rospy.wait_for_message('distance', Bool, 0.2).data  # We retrieve sensor distance
 
         robot.robot.move_group.stop()
         robot.relative_move(0, 0, 0.001)
