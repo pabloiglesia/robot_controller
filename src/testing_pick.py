@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 
 import rospy
+import time
 import copy
 from std_msgs.msg import Bool
 
@@ -30,6 +31,7 @@ if __name__ == '__main__':
             distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
 
         robot.robot.move_group.stop()
-
+        robot.relative_move(0, 0, 0.001)
+        time.sleep(1)
         distance = Environment.CARTESIAN_CENTER[2] - robot.robot.get_current_pose().pose.position.z
         robot.relative_move(0, 0, distance)
