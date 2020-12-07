@@ -25,6 +25,7 @@ if __name__ == '__main__':
         for i in range(n_points):
             plan.joint_trajectory.points[i].time_from_start = plan.joint_trajectory.points[i].time_from_start / new_speed
             for j in range(n_joints):
+                print(new_plan.joint_trajectory.points[i].velocities[j])
                 new_plan.joint_trajectory.points[i].velocities[j] = plan.joint_trajectory.points[i].velocities[j] * new_speed
                 new_plan.joint_trajectory.points[i].accelerations[j] = plan.joint_trajectory.points[i].accelerations[
                                                                            j] * new_speed
