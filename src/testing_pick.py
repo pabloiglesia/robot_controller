@@ -4,6 +4,7 @@ import rospy
 import time
 import copy
 from std_msgs.msg import Bool
+from moveit_msgs import RobotTrajectory
 import datetime
 
 from Robot import Robot
@@ -15,6 +16,22 @@ if __name__ == '__main__':
     robot = Robot()
     robot.go_to_initial_pose()
 
+    def change_plan_speed(plan, new_speed):
+        new_plan = RobotTrajectory()
+        new_plan.joint_trajectory = plan.joint_trajectory
+        n_joints = len(plan.joint_trajectory.joint_names)
+        n_points = len(plan.joint_trajectory.points)
+
+        for i in range(n_points):
+            plan.joint_trajectory.points[i].time_from_start = plan.joint_trajectory.points[i].time_from_start / new_speed
+            for j in range(n_joints):
+                new_plan.joint_trajectory.points[i].velocities[j] = plan.joint_trajectory.points[i].velocities[j] * new_speed
+                new_plan.joint_trajectory.points[i].accelerations[j] = plan.joint_trajectory.points[i].accelerations[
+                                                                           j] * new_speed
+                new_plan.joint_trajectory.points[i].positions[j] = plan.joint_trajectory.points[i].positions[j]
+
+        return new_plan
+
     while True:
         waypoints = []
         wpose = robot.robot.get_current_pose().pose
@@ -25,6 +42,9 @@ if __name__ == '__main__':
             waypoints,  # waypoints to follow
             0.01,  # eef_step
             0.0)  # jump_threshold
+
+        plan = change_plan_speed(plan, 0.1)
+
         robot.robot.move_group.execute(plan, wait=False)
 
         distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
