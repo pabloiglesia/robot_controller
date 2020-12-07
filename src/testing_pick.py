@@ -4,7 +4,7 @@ import rospy
 import time
 import copy
 from std_msgs.msg import Bool
-from moveit_msgs import RobotTrajectory
+from moveit_msgs.msg import RobotTrajectory
 import datetime
 
 from Robot import Robot
