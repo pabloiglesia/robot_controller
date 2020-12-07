@@ -110,54 +110,68 @@ class Robot:
         # up_distance = 0  # Variable were we store the distance that we have move the robot so that we can go back to the
         # original pose
 
-        # distance_ok = False  # False until target is reached
-        # while not distance_ok:
-        #     # Check if the distance is the correct one
-        #     # TODO : check if the distance is in the correct measures
-        #     distance = rospy.wait_for_message('distance', Float32).data  # We retrieve sensor distance
-        #
-        #     if distance <= Environment.PICK_DISTANCE:  # If distance is equal or smaller than the target distance
-        #         # TODO : Check what kind of msg the subscriber is waiting
-        #         self.send_gripper_message(True)  # We try to pick the object enabling the vacuum gripper
-        #         time.sleep(2)  # We wait some time to let the vacuum pick the object
-        #         distance_ok = True  # End the loop by setting this variable to True
-        #     else:  # If the distance to the objects is higher than the target distance
-        #         difference = distance - Environment.PICK_DISTANCE  # We calculate the difference between the two distances
-        #         up_distance += difference  # We increment the up_distance variable
-        #         self.relative_move(0, 0, -difference)  # We try to move to the desired distance
+        def back_to_original_pose(robot):
+            """
+            Function used to go back to the original height once a vertical movement has been performed.
+            :param robot: robot_controller.Robot.py object
+            :return:
+            """
+            distance = Environment.CARTESIAN_CENTER[2] - robot.robot.get_current_pose().pose.position.z
+            robot.relative_move(0, 0, distance)
 
+        def down_movement(robot):
+            """
+            This function performs the down movement of the pick action.
 
+            It creates an asynchronous move group trajectory planning. This way the function is able to receive distance
+            messages while the robot is moving and stop it once the robot is in contact with an object.
 
+            Finally, when there is any problems with the communications the movement is stopped and
+            communication_problem boolean flag is set to True. It is considered that there is a problem with
+            communications when the robot is not receiving any distance messages during 200 milli-seconds (timeout=0.2)
 
+            :param robot: robot_controller.Robot.py object
+            :return: communication_problem flag
+            """
+            waypoints = []
+            wpose = robot.robot.get_current_pose().pose
+            wpose.position.z -= (wpose.position.z - 0.24)  # Third move sideways (z)
+            waypoints.append(copy.deepcopy(wpose))
 
+            (plan, fraction) = robot.robot.move_group.compute_cartesian_path(
+                waypoints,  # waypoints to follow
+                0.01,  # eef_step
+                0.0)  # jump_threshold
+            robot.robot.move_group.execute(plan, wait=False)
 
-        # distance_ok = False  # False until target is reached
-        # while not distance_ok:
-        #     # Check if the distance is the correct one
-        #     # TODO : check if the distance is in the correct measures
-        #     distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
-        #     self.relative_move(0, 0, -0.01)  # We try to move to the desired distance
-        #     up_distance += 0.01  # We increment the up_distance variable
+            distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
 
-        # self.relative_move(0, 0, -0.01)  # We try to move to the desired distance
-        # up_distance += 0.01  # We increment the up_distance variable
-        # self.send_gripper_message(True)  # We try to pick the object enabling the vacuum gripper
-        # time.sleep(2)  # We wait some time to let the vacuum pick the object
+            while not distance_ok:
+                try:
+                    communication_problem = False
+                    distance_ok = rospy.wait_for_message('distance', Bool, 0.2).data  # We retrieve sensor distance
+                except:
+                    communication_problem = True
+                    rospy.loginfo("Error in communications, trying again")
+                    break
 
-        # self.relative_move(0, 0, up_distance)  # We went back to the original pose
-        # waypoints = []
-        # wpose = self.robot.get_current_pose().pose
-        # wpose.position.z -= (wpose.position.z - 0.24)  # Third move sideways (z)
-        # waypoints.append(copy.deepcopy(wpose))
-        #
-        # (plan, fraction) = self.robot.move_group.compute_cartesian_path(
-        #     waypoints,  # waypoints to follow
-        #     0.01,  # eef_step
-        #     0.0)  # jump_threshold
-        #
-        # self.robot.velocity_factor(0.2)
-        # self.robot.move_group.execute(plan, wait=False)
+            # Both stop and 10 mm up movement to stop the robot
+            self.robot.move_group.stop()
+            self.relative_move(0, 0, 0.001)
 
+            return communication_problem
+
+        def pick_action():
+            """
+            Function that actually performs the pick action using down_movement() and back_to_original_pose()
+            :return:
+            """
+            while True:
+                communication_problem = down_movement(self)
+                if communication_problem:
+                    back_to_original_pose(self)
+                else:
+                    break
 
         distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
         while True:
