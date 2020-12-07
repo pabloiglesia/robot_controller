@@ -110,6 +110,40 @@ class Robot:
         # up_distance = 0  # Variable were we store the distance that we have move the robot so that we can go back to the
         # original pose
 
+        def change_plan_speed(plan, new_speed):
+            """
+            Function used for changing Robot velocity of a cartesian path once the movement have been planned.
+            :param plan: RobotTrajectory object. For example, the one calculated by compute_cartesian_path() MoveGroup function.
+            :param new_speed: speed factor of the robot, been 1 the original speed and 0 the minimum.
+            :return: RobotTrajectory object (new plan).
+            """
+            new_plan = plan
+            n_joints = len(plan.joint_trajectory.joint_names)
+            n_points = len(plan.joint_trajectory.points)
+
+            points = []
+            for i in range(n_points):
+                plan.joint_trajectory.points[i].time_from_start = plan.joint_trajectory.points[
+                                                                      i].time_from_start / new_speed
+                velocities = []
+                accelerations = []
+                positions = []
+                for j in range(n_joints):
+                    velocities.append(plan.joint_trajectory.points[i].velocities[j] * new_speed)
+                    accelerations.append(plan.joint_trajectory.points[i].accelerations[j] * new_speed)
+                    positions.append(plan.joint_trajectory.points[i].positions[j])
+
+                point = plan.joint_trajectory.points[i]
+                point.velocities = velocities
+                point.accelerations = accelerations
+                point.positions = positions
+
+                points.append(point)
+
+            new_plan.joint_trajectory.points = points
+
+            return new_plan
+
         def back_to_original_pose(robot):
             """
             Function used to go back to the original height once a vertical movement has been performed.
@@ -119,7 +153,7 @@ class Robot:
             distance = Environment.CARTESIAN_CENTER[2] - robot.robot.get_current_pose().pose.position.z
             robot.relative_move(0, 0, distance)
 
-        def down_movement(robot):
+        def down_movement(robot, movement_speed):
             """
             This function performs the down movement of the pick action.
 
@@ -133,59 +167,48 @@ class Robot:
             :param robot: robot_controller.Robot.py object
             :return: communication_problem flag
             """
-            waypoints = []
-            wpose = robot.robot.get_current_pose().pose
-            wpose.position.z -= (wpose.position.z - 0.24)  # Third move sideways (z)
-            waypoints.append(copy.deepcopy(wpose))
-
-            (plan, fraction) = robot.robot.move_group.compute_cartesian_path(
-                waypoints,  # waypoints to follow
-                0.01,  # eef_step
-                0.0)  # jump_threshold
-            robot.robot.move_group.execute(plan, wait=False)
 
             distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
+            communication_problem = False
 
-            while not distance_ok:
-                try:
-                    communication_problem = False
-                    distance_ok = rospy.wait_for_message('distance', Bool, 0.2).data  # We retrieve sensor distance
-                except:
-                    communication_problem = True
-                    rospy.loginfo("Error in communications, trying again")
-                    break
+            if not distance_ok:  # If the robot is already in contact with an object, no movement is performed
+                waypoints = []
+                wpose = robot.robot.get_current_pose().pose
+                wpose.position.z -= (wpose.position.z - 0.26)  # Third move sideways (z)
+                waypoints.append(copy.deepcopy(wpose))
 
-            # Both stop and 10 mm up movement to stop the robot
-            self.robot.move_group.stop()
-            self.relative_move(0, 0, 0.001)
+                (plan, fraction) = robot.robot.move_group.compute_cartesian_path(
+                    waypoints,  # waypoints to follow
+                    0.01,  # eef_step
+                    0.0)  # jump_threshold
+
+                plan = change_plan_speed(plan, movement_speed)
+                robot.robot.move_group.execute(plan, wait=False)
+
+                while not distance_ok:
+                    try:
+                        distance_ok = rospy.wait_for_message('distance', Bool, 0.2).data  # We retrieve sensor distance
+                    except:
+                        communication_problem = True
+                        rospy.loginfo("Error in communications, trying again")
+                        break
+
+                # Both stop and 10 mm up movement to stop the robot
+                robot.robot.move_group.stop()
+                robot.relative_move(0, 0, 0.001)
 
             return communication_problem
 
-        def pick_action():
-            """
-            Function that actually performs the pick action using down_movement() and back_to_original_pose()
-            :return:
-            """
-            while True:
-                communication_problem = down_movement(self)
-                if communication_problem:
-                    back_to_original_pose(self)
-                else:
-                    break
-
-        distance_ok = rospy.wait_for_message('distance', Bool).data  # We retrieve sensor distance
-        while True:
-            time.sleep(0.2)
-            if not rospy.wait_for_message('distance', Bool).data:  # We retrieve sensor distance
-                self.relative_move(0, 0, -0.01)
-            else:
-                self.relative_move(0, 0, -0.005)
+        while True:  # Infinite loop until the movement is completed
+            communication_problem = down_movement(self, 0.5)
+            if communication_problem:  # If there has been a communication problem we continue in the loop
+                rospy.loginfo("Problem in communications")
+            else:  # If not, we go out of the loop
                 break
 
         self.send_gripper_message(True, timer=4)  # We turn on the gripper
 
-        distance = Environment.CARTESIAN_CENTER[2] - self.robot.get_current_pose().pose.position.z
-        self.relative_move(0,0,distance)
+        back_to_original_pose(self)  # Back to the original pose
 
         object_gripped = rospy.wait_for_message('object_gripped', Bool).data
         if object_gripped:  # If we have gripped an object we place it into the desired point

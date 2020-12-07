@@ -16,6 +16,12 @@ from ai_manager.Environment import Environment
 
 
 def change_plan_speed(plan, new_speed):
+    """
+    Function used for changing Robot velocity of a cartesian path once the movement have been planned.
+    :param plan: RobotTrajectory object. For example, the one calculated by compute_cartesian_path() MoveGroup function.
+    :param new_speed: speed factor of the robot, been 1 the original speed and 0 the minimum.
+    :return: RobotTrajectory object (new plan).
+    """
     new_plan = plan
     n_joints = len(plan.joint_trajectory.joint_names)
     n_points = len(plan.joint_trajectory.points)
@@ -74,7 +80,7 @@ def down_movement(robot, movement_speed):
     if not distance_ok:  # If the robot is already in contact with an object, no movement is performed
         waypoints = []
         wpose = robot.robot.get_current_pose().pose
-        wpose.position.z -= (wpose.position.z)  # Third move sideways (z)
+        wpose.position.z -= (wpose.position.z - 0.26)  # Third move sideways (z)
         waypoints.append(copy.deepcopy(wpose))
 
         (plan, fraction) = robot.robot.move_group.compute_cartesian_path(
