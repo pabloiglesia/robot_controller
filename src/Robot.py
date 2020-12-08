@@ -199,12 +199,9 @@ class Robot:
 
             return communication_problem
 
-        while True:  # Infinite loop until the movement is completed
-            communication_problem = down_movement(self, 0.5)
-            if communication_problem:  # If there has been a communication problem we continue in the loop
-                rospy.loginfo("Problem in communications")
-            else:  # If not, we go out of the loop
-                break
+        communication_problem = True
+        while communication_problem:  # Infinite loop until the movement is completed
+            communication_problem = down_movement(self, movement_speed=0.5)
 
         self.send_gripper_message(True, timer=4)  # We turn on the gripper
 
@@ -236,7 +233,6 @@ class Robot:
         # Then, we left the object
         self.relative_move(0, 0, -0.05)
         # Then, we switch off the vacuum gripper so the object can be placed
-        # TODO : Check the correct information to send the topic
         self.send_gripper_message(False)
         # Wait some seconds, in order to the msg to arrive to the gripper
         time.sleep(2)
@@ -244,7 +240,6 @@ class Robot:
         self.relative_move(0, 0, 0.05)
         # Final we put the robot in the center of the box, the episode should finish now
         self.robot.go_to_joint_state(Environment.ANGULAR_CENTER)
-        # TODO : publicar si se ha acabado el episodio
 
     def go_to_initial_pose(self):
         target_reached = self.robot.go_to_joint_state(Environment.ANGULAR_CENTER)
