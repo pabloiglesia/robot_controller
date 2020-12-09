@@ -106,6 +106,7 @@ def down_movement(robot, movement_speed):
 
     return communication_problem
 
+
 if __name__ == '__main__':
     rospy.init_node('robotUR')
 

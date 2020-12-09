@@ -200,8 +200,10 @@ class Robot:
             return communication_problem
 
         communication_problem = True
+        print("entrando en el bucle")
         while communication_problem:  # Infinite loop until the movement is completed
             communication_problem = down_movement(self, movement_speed=0.5)
+        print("fuera del bucle")
 
         self.send_gripper_message(True, timer=4)  # We turn on the gripper
 
