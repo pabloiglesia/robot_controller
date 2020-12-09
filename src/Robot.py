@@ -174,7 +174,7 @@ class Robot:
             if not distance_ok:  # If the robot is already in contact with an object, no movement is performed
                 waypoints = []
                 wpose = robot.robot.get_current_pose().pose
-                wpose.position.z -= (wpose.position.z - 0.26)  # Third move sideways (z)
+                wpose.position.z -= (wpose.position.z)  # Third move sideways (z)
                 waypoints.append(copy.deepcopy(wpose))
 
                 (plan, fraction) = robot.robot.move_group.compute_cartesian_path(
