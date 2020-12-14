@@ -123,13 +123,14 @@ if __name__ == '__main__':
         robot.relative_move(x_move, y_move, 0)
 
         while True:
-            communication_problem = down_movement(robot, 0.5)
+            communication_problem = down_movement(robot, 0.2)
             if communication_problem:
                 rospy.loginfo("Problem in communications")
             else:
                 break
 
         back_to_original_pose(robot)
+        time.sleep(1)
 
         x_box, y_box = Environment.get_relative_corner('ne')
         x_move, y_move = robot.calculate_relative_movement([x_box, y_box])
@@ -137,13 +138,14 @@ if __name__ == '__main__':
         robot.relative_move(x_move, y_move, 0)
 
         while True:
-            communication_problem = down_movement(robot, 0.5)
+            communication_problem = down_movement(robot, 0.2)
             if communication_problem:
                 rospy.loginfo("Problem in communications")
             else:
                 break
 
         back_to_original_pose(robot)
+        time.sleep(1)
 
         x_box, y_box = Environment.get_relative_corner('nw')
         x_move, y_move = robot.calculate_relative_movement([x_box, y_box])
@@ -151,13 +153,14 @@ if __name__ == '__main__':
         robot.relative_move(x_move, y_move, 0)
 
         while True:
-            communication_problem = down_movement(robot, 0.5)
+            communication_problem = down_movement(robot, 0.2)
             if communication_problem:
                 rospy.loginfo("Problem in communications")
             else:
                 break
 
         back_to_original_pose(robot)
+        time.sleep(1)
 
         x_box, y_box = Environment.get_relative_corner('sw')
         x_move, y_move = robot.calculate_relative_movement([x_box, y_box])
@@ -165,10 +168,11 @@ if __name__ == '__main__':
         robot.relative_move(x_move, y_move, 0)
 
         while True:
-            communication_problem = down_movement(robot, 0.5)
+            communication_problem = down_movement(robot, 0.2)
             if communication_problem:
                 rospy.loginfo("Problem in communications")
             else:
                 break
 
         back_to_original_pose(robot)
+        time.sleep(1)
