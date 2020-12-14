@@ -80,7 +80,7 @@ def down_movement(robot, movement_speed):
     if not distance_ok:  # If the robot is already in contact with an object, no movement is performed
         waypoints = []
         wpose = robot.robot.get_current_pose().pose
-        wpose.position.z -= (wpose.position.z - 0.26)  # Third move sideways (z)
+        wpose.position.z -= (wpose.position.z)  # Third move sideways (z)
         waypoints.append(copy.deepcopy(wpose))
 
         (plan, fraction) = robot.robot.move_group.compute_cartesian_path(
@@ -113,12 +113,7 @@ if __name__ == '__main__':
     robot = Robot()
     robot.go_to_initial_pose()
 
-    while True:
-        communication_problem = down_movement(robot, 0.5)
-        if communication_problem:
-            rospy.loginfo("Problem in communications")
-        else:
-            break
+
 
     while True:
 
@@ -127,17 +122,53 @@ if __name__ == '__main__':
         # We move the robot to the corner of the box
         robot.relative_move(x_move, y_move, 0)
 
+        while True:
+            communication_problem = down_movement(robot, 0.5)
+            if communication_problem:
+                rospy.loginfo("Problem in communications")
+            else:
+                break
+
+        back_to_original_pose(robot)
+
         x_box, y_box = Environment.get_relative_corner('ne')
         x_move, y_move = robot.calculate_relative_movement([x_box, y_box])
         # We move the robot to the corner of the box
         robot.relative_move(x_move, y_move, 0)
+
+        while True:
+            communication_problem = down_movement(robot, 0.5)
+            if communication_problem:
+                rospy.loginfo("Problem in communications")
+            else:
+                break
+
+        back_to_original_pose(robot)
 
         x_box, y_box = Environment.get_relative_corner('nw')
         x_move, y_move = robot.calculate_relative_movement([x_box, y_box])
         # We move the robot to the corner of the box
         robot.relative_move(x_move, y_move, 0)
 
+        while True:
+            communication_problem = down_movement(robot, 0.5)
+            if communication_problem:
+                rospy.loginfo("Problem in communications")
+            else:
+                break
+
+        back_to_original_pose(robot)
+
         x_box, y_box = Environment.get_relative_corner('sw')
         x_move, y_move = robot.calculate_relative_movement([x_box, y_box])
         # We move the robot to the corner of the box
         robot.relative_move(x_move, y_move, 0)
+
+        while True:
+            communication_problem = down_movement(robot, 0.5)
+            if communication_problem:
+                rospy.loginfo("Problem in communications")
+            else:
+                break
+
+        back_to_original_pose(robot)
