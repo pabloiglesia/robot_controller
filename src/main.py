@@ -65,6 +65,7 @@ if __name__ == '__main__':
 
     # Test of positioning with angular coordinates
     robot.go_to_initial_pose()
+    robot.take_place()
 
     # Let's put the robot in a random position to start, creation of new state
     object_gripped = take_action('random_state', robot)
