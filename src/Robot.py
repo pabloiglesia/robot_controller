@@ -21,7 +21,7 @@ class Robot:
         self.gripper_topic = gripper_topic  # Gripper topic
         self.gripper_publisher = rospy.Publisher(self.gripper_topic, Bool)  # Publisher for the gripper topic
         self.image_controller = ImageController(image_topic='/usb_cam2/image_raw')
-        self.environmert_image = None
+        self.environment_image = None
         self.random_state_strategy = random_state_strategy
 
     def relative_move(self, x, y, z):
@@ -85,7 +85,7 @@ class Robot:
 
     def take_random_state(self):
         # Move robot to random positions using relative moves. Get coordinates
-        relative_coordinates = Environment.generate_random_state(self.environmert_image, self.random_state_strategy)
+        relative_coordinates = Environment.generate_random_state(self.environment_image, self.random_state_strategy)
         # Calculate the new coordinates
         x_movement, y_movement = self.calculate_relative_movement(relative_coordinates)
         # Move the robot to the random state
@@ -243,7 +243,7 @@ class Robot:
         # Then the robot goes up
         self.relative_move(0, 0, 0.05)
         # get environment image
-        self.environmert_image, w, l = self.image_controller.get_image()
+        self.environment_image, w, l = self.image_controller.get_image()
         # Final we put the robot in the center of the box, the episode should finish now
         self.robot.go_to_joint_state(Environment.ANGULAR_CENTER)
 
