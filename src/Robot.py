@@ -244,6 +244,7 @@ class Robot:
         self.relative_move(0, 0, 0.05)
         # get environment image
         self.environment_image, w, l = self.image_controller.get_image()
+        self.image_controller.record_image(self.environment_image, True)
         # Final we put the robot in the center of the box, the episode should finish now
         self.robot.go_to_joint_state(Environment.ANGULAR_CENTER)
 
