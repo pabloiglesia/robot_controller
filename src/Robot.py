@@ -194,7 +194,7 @@ class Robot:
                         distance_ok = rospy.wait_for_message('distance', Bool, 0.2).data  # We retrieve sensor distance
                     except:
                         communication_problem = True
-                        rospy.loginfo("Error in communications, trying again")
+                        rospy.logwarn("Error in communications, trying again")
                         break
 
                 # Both stop and 10 mm up movement to stop the robot
